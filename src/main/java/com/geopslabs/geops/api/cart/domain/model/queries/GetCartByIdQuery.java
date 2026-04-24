@@ -2,7 +2,6 @@ package com.geopslabs.geops.api.cart.domain.model.queries;
 
 /**
  * GetCartByIdQuery
- *
  * Query record to retrieve a specific cart by its unique identifier.
  * This query is essential for fetching detailed information about a particular cart
  *

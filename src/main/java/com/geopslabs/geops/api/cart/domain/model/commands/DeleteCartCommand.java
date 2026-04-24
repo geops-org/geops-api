@@ -2,7 +2,6 @@ package com.geopslabs.geops.api.cart.domain.model.commands;
 
 /**
  * DeleteCartCommand
- *
  * Command record that encapsulates the necessary data to delete a cart.
  * This command validates input data to ensure the cart ID is provided
  *

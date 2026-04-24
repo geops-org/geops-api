@@ -2,7 +2,6 @@ package com.geopslabs.geops.api.cart.domain.model.commands;
 
 /**
  * CreateCartCommand
- *
  * Command record that encapsulates the necessary data to create a new shopping cart.
  * This command validates input data to ensure the user ID is provided
  *

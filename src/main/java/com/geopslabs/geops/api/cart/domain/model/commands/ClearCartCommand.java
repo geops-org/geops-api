@@ -2,7 +2,6 @@ package com.geopslabs.geops.api.cart.domain.model.commands;
 
 /**
  * ClearCartCommand
- *
  * Command record that encapsulates the necessary data to clear all items from a user's cart.
  * This command validates input data to ensure the user ID is provided
  *
