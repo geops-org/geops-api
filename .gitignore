@@ -3,7 +3,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-.claude
+CLAUDE.md
 
 # Compiled classes and artifacts
 *.class
