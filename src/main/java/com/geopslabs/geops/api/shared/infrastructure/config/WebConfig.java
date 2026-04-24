@@ -13,7 +13,6 @@ import java.util.List;
 
 /**
  * Global CORS configuration
- *
  * This configuration enables Cross-Origin requests from the frontend development
  * server and allows common HTTP methods and headers used by the application.
  * The allowed origins are configurable via the `frontend.url` and
@@ -27,7 +26,7 @@ public class WebConfig {
     public WebConfig(
             @Value("${frontend.url:http://localhost:4200}") String frontendUrl,
             @Value("${prod.frontend.url:}") String prodFrontendUrl,
-            @Value("${prod.backend.url:}") String prodBackendUrl
+            @Value("${prod.api.url:}") String prodApiUrl
     ) {
         List<String> origins = new ArrayList<>();
         if (frontendUrl != null && !frontendUrl.isBlank()) {
@@ -36,8 +35,8 @@ public class WebConfig {
         if (prodFrontendUrl != null && !prodFrontendUrl.isBlank()) {
             origins.add(prodFrontendUrl);
         }
-        if (prodBackendUrl != null && !prodBackendUrl.isBlank()) {
-            origins.add(prodBackendUrl);
+        if (prodApiUrl != null && !prodApiUrl.isBlank()) {
+            origins.add(prodApiUrl);
         }
         this.allowedOrigins = Collections.unmodifiableList(origins);
     }
