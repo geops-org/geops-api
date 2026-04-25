@@ -3,6 +3,8 @@ import com.geopslabs.geops.api.notifications.application.internal.outboundservic
 import com.geopslabs.geops.api.reviews.domain.model.aggregates.Review;
 import com.geopslabs.geops.api.reviews.domain.model.commands.CreateReviewCommand;
 import com.geopslabs.geops.api.reviews.domain.model.commands.UpdateReviewCommand;
+import com.geopslabs.geops.api.reviews.domain.model.exceptions.ReviewNotAllowedException;
+import com.geopslabs.geops.api.reviews.domain.services.ConsumptionValidationPort;
 import com.geopslabs.geops.api.reviews.domain.services.OfferQueryPort;
 import com.geopslabs.geops.api.reviews.domain.services.ReviewCommandService;
 import com.geopslabs.geops.api.reviews.domain.services.UserValidationPort;
@@ -30,17 +32,20 @@ public class ReviewCommandServiceImpl implements ReviewCommandService {
     private final ReviewRepository reviewRepository;
     private final UserValidationPort userValidationPort;
     private final OfferQueryPort offerQueryPort;
+    private final ConsumptionValidationPort consumptionValidationPort;
     private final NotificationFactoryService notificationFactory;
 
     public ReviewCommandServiceImpl(
         ReviewRepository reviewRepository,
         UserValidationPort userValidationPort,
         OfferQueryPort offerQueryPort,
+        ConsumptionValidationPort consumptionValidationPort,
         NotificationFactoryService notificationFactory
     ) {
         this.reviewRepository = reviewRepository;
         this.userValidationPort = userValidationPort;
         this.offerQueryPort = offerQueryPort;
+        this.consumptionValidationPort = consumptionValidationPort;
         this.notificationFactory = notificationFactory;
     }
 
@@ -49,6 +54,9 @@ public class ReviewCommandServiceImpl implements ReviewCommandService {
      */
     @Override
     public Optional<Review> handle(CreateReviewCommand command) {
+        if (!consumptionValidationPort.existsByUserAndOffer(command.userId(), command.offerId()))
+            throw new ReviewNotAllowedException("Debes visitar primero");
+
         try {
             if (!userValidationPort.existsById(command.userId()))
                 throw new IllegalArgumentException("User not found with id: " + command.userId());
