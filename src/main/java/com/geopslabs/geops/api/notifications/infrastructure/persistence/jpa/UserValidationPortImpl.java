@@ -5,7 +5,7 @@ import com.geopslabs.geops.api.identity.domain.services.UserQueryService;
 import com.geopslabs.geops.api.notifications.domain.services.UserValidationPort;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("notificationsUserValidationPortImpl")
 public class UserValidationPortImpl implements UserValidationPort {
 
     private final UserQueryService userQueryService;

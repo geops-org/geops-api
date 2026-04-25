@@ -5,7 +5,7 @@ import com.geopslabs.geops.api.identity.domain.services.UserQueryService;
 import com.geopslabs.geops.api.reviews.domain.services.UserValidationPort;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("reviewsUserValidationPortImpl")
 public class UserValidationPortImpl implements UserValidationPort {
 
     private final UserQueryService userQueryService;
