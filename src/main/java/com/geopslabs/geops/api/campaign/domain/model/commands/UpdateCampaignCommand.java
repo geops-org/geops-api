@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public record UpdateCampaignCommand(Long id, String name, String description, LocalDate startDate,
                                     LocalDate endDate, String status, Float estimatedBudget,
-                                    Long totalImpressions, Long totalClicks, Float ctr) {
+                                    Long totalImpressions, Long totalClicks) {
     public UpdateCampaignCommand {
 
         if(name == null || name.isBlank())
@@ -42,10 +42,6 @@ public record UpdateCampaignCommand(Long id, String name, String description, Lo
 
         if (totalClicks != null && totalClicks < 0) {
             throw new IllegalArgumentException("Total clicks must be zero or greater");
-        }
-
-        if (ctr != null && (ctr < 0 || ctr > 100)) {
-            throw new IllegalArgumentException("CTR must be between 0 and 100");
         }
     }
 }

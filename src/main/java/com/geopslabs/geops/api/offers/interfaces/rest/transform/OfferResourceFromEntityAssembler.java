@@ -27,7 +27,7 @@ public class OfferResourceFromEntityAssembler {
     public static OfferResource toResourceFromEntity(Offer entity) {
         return new OfferResource(
             entity.getId(),
-            entity.getCampaign().getId(),
+            entity.getCampaignId(),
             entity.getTitle(),
             entity.getPartner(),
             entity.getPrice(),

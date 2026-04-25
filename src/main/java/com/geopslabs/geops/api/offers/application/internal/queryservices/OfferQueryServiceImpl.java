@@ -1,11 +1,11 @@
 package com.geopslabs.geops.api.offers.application.internal.queryservices;
 
-import com.geopslabs.geops.api.campaign.infrastructure.persistence.jpa.CampaignRepository;
 import com.geopslabs.geops.api.offers.domain.model.aggregates.Offer;
 import com.geopslabs.geops.api.offers.domain.model.queries.GetAllOffersByCampaignIdQuery;
 import com.geopslabs.geops.api.offers.domain.model.queries.GetAllOffersQuery;
 import com.geopslabs.geops.api.offers.domain.model.queries.GetOfferByIdQuery;
 import com.geopslabs.geops.api.offers.domain.model.queries.GetOffersByIdsQuery;
+import com.geopslabs.geops.api.offers.domain.services.CampaignValidationPort;
 import com.geopslabs.geops.api.offers.domain.services.OfferQueryService;
 import com.geopslabs.geops.api.offers.infrastructure.persistence.jpa.OfferRepository;
 import org.springframework.stereotype.Service;
@@ -29,17 +29,11 @@ import java.util.Optional;
 public class OfferQueryServiceImpl implements OfferQueryService {
 
     private final OfferRepository offerRepository;
-    private final CampaignRepository campaignRepository;
+    private final CampaignValidationPort campaignValidationPort;
 
-    /**
-     * Constructor for dependency injection
-     *
-     * @param offerRepository The repository for offer data access
-     * @param campaignRepository The repository for campaign data access
-     */
-    public OfferQueryServiceImpl(OfferRepository offerRepository, CampaignRepository campaignRepository) {
+    public OfferQueryServiceImpl(OfferRepository offerRepository, CampaignValidationPort campaignValidationPort) {
         this.offerRepository = offerRepository;
-        this.campaignRepository = campaignRepository;
+        this.campaignValidationPort = campaignValidationPort;
     }
 
     @Override
@@ -87,10 +81,9 @@ public class OfferQueryServiceImpl implements OfferQueryService {
     @Override
     public List<Offer> handle(GetAllOffersByCampaignIdQuery query) {
         try{
-            var existingCampaign = campaignRepository.findCampaignById(query.campaignId());
-            if (existingCampaign.isEmpty())
+            if (!campaignValidationPort.existsById(query.campaignId()))
                 throw new IllegalArgumentException("Campaign with id " + query.campaignId() + " does not exist");
-            return offerRepository.findByCampaign_Id(query.campaignId());
+            return offerRepository.findByCampaignId(query.campaignId());
         }
         catch (Exception e){
             System.err.println("Error retrieving all offers by campaign id: " + e.getMessage());

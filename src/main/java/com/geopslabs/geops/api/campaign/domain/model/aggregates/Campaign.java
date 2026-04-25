@@ -44,11 +44,7 @@ public class Campaign extends AuditableAbstractAggregateRoot<Campaign> {
     @Column(name = "total_clicks", nullable = false)
     private Long totalClicks;
 
-    @Column(name ="CTR", nullable = false)
-    private float CTR;
-
     public Campaign(){}
-
 
     public Campaign(CreateCampaignCommand command) {
         this.userId = command.userId();
@@ -60,11 +56,15 @@ public class Campaign extends AuditableAbstractAggregateRoot<Campaign> {
         this.estimatedBudget = command.estimatedBudget() != null ? command.estimatedBudget() : 0;
         this.totalImpressions = 0L;
         this.totalClicks = 0L;
-        this.CTR = 0;
+    }
+
+    public float getCTR() {
+        if (totalImpressions == null || totalImpressions == 0) return 0f;
+        return (float) totalClicks / totalImpressions * 100f;
     }
 
     public void edit(String name, String description, LocalDate startDate, LocalDate endDate, ECampaignStatus status,
-                     Float estimatedBudget, Long totalImpressions, Long totalClicks, Float ctr) {
+                     Float estimatedBudget, Long totalImpressions, Long totalClicks) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
@@ -78,9 +78,6 @@ public class Campaign extends AuditableAbstractAggregateRoot<Campaign> {
         }
         if (totalClicks != null) {
             this.totalClicks = Math.max(0L, totalClicks);
-        }
-        if (ctr != null) {
-            this.CTR = Math.max(0, ctr);
         }
     }
 }

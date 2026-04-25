@@ -32,6 +32,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
      * @param campaignId The campaign ID
      * @return A list of offer objects from the campaign
      */
-    List<Offer> findByCampaign_Id(Long campaignId);
+    List<Offer> findByCampaignId(Long campaignId);
 
 }

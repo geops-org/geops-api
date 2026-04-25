@@ -1,11 +1,10 @@
 package com.geopslabs.geops.api.offers.application.internal.commandservices;
 
-import com.geopslabs.geops.api.campaign.domain.model.valueobjects.ECampaignStatus;
-import com.geopslabs.geops.api.campaign.infrastructure.persistence.jpa.CampaignRepository;
 import com.geopslabs.geops.api.offers.domain.model.aggregates.Offer;
 import com.geopslabs.geops.api.offers.domain.model.commands.CreateOfferCommand;
 import com.geopslabs.geops.api.offers.domain.model.commands.DeleteOfferCommand;
 import com.geopslabs.geops.api.offers.domain.model.commands.UpdateOfferCommand;
+import com.geopslabs.geops.api.offers.domain.services.CampaignValidationPort;
 import com.geopslabs.geops.api.offers.domain.services.OfferCommandService;
 import com.geopslabs.geops.api.offers.infrastructure.persistence.jpa.OfferRepository;
 import org.springframework.stereotype.Service;
@@ -28,16 +27,11 @@ import java.util.Optional;
 public class OfferCommandServiceImpl implements OfferCommandService {
 
     private final OfferRepository offerRepository;
-    private final CampaignRepository campaignRepository;
+    private final CampaignValidationPort campaignValidationPort;
 
-    /**
-     * Constructor for dependency injection
-     *
-     * @param offerRepository The repository for offer data access
-     */
-    public OfferCommandServiceImpl(OfferRepository offerRepository, CampaignRepository campaignRepository) {
+    public OfferCommandServiceImpl(OfferRepository offerRepository, CampaignValidationPort campaignValidationPort) {
         this.offerRepository = offerRepository;
-        this.campaignRepository = campaignRepository;
+        this.campaignValidationPort = campaignValidationPort;
     }
 
     /**
@@ -46,17 +40,13 @@ public class OfferCommandServiceImpl implements OfferCommandService {
     @Override
     public Optional<Offer> handle(CreateOfferCommand command) {
         try {
-            //Verifying the campaign exists
-            var existingCampaign = campaignRepository.findCampaignById(command.campaignId());
-            if (existingCampaign.isEmpty())
+            if (!campaignValidationPort.existsById(command.campaignId()))
                 throw new IllegalArgumentException("Campaign with id " + command.campaignId() + " does not exist");
 
-            //Verifying if the campaign is active
-            if(existingCampaign.get().getStatus() != ECampaignStatus.ACTIVE)
+            if (!campaignValidationPort.isActive(command.campaignId()))
                 throw new IllegalArgumentException("The Campaign is not ACTIVE");
 
-            // Create new offer from command
-            var offer = new Offer(existingCampaign.get(), command);
+            var offer = new Offer(command.campaignId(), command);
 
             // Save the offer to the repository
             var savedOffer = offerRepository.save(offer);
