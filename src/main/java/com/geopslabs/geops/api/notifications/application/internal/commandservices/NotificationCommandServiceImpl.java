@@ -1,7 +1,7 @@
 package com.geopslabs.geops.api.notifications.application.internal.commandservices;
 
-import com.geopslabs.geops.api.identity.infrastructure.persistence.jpa.UserRepository;
 import com.geopslabs.geops.api.notifications.domain.model.aggregates.Notification;
+import com.geopslabs.geops.api.notifications.domain.services.UserValidationPort;
 import com.geopslabs.geops.api.notifications.domain.model.commands.CreateNotificationCommand;
 import com.geopslabs.geops.api.notifications.domain.model.commands.DeleteNotificationCommand;
 import com.geopslabs.geops.api.notifications.domain.model.commands.MarkNotificationAsReadCommand;
@@ -26,25 +26,23 @@ import java.util.Optional;
 public class NotificationCommandServiceImpl implements NotificationCommandService {
 
     private final NotificationRepository notificationRepository;
-    private final UserRepository userRepository;
+    private final UserValidationPort userValidationPort;
 
     public NotificationCommandServiceImpl(NotificationRepository notificationRepository,
-                                          UserRepository userRepository) {
+                                          UserValidationPort userValidationPort) {
         this.notificationRepository = notificationRepository;
-        this.userRepository = userRepository;
+        this.userValidationPort = userValidationPort;
     }
 
     @Override
     public Optional<Notification> handle(CreateNotificationCommand command) {
         try {
-            var userOptional = userRepository.findById(command.userId());
-            
-            if (userOptional.isEmpty()) {
+            if (!userValidationPort.existsById(command.userId())) {
                 System.err.println("User with ID " + command.userId() + " not found");
                 return Optional.empty();
             }
 
-            var notification = new Notification(command, userOptional.get());
+            var notification = new Notification(command);
             var savedNotification = notificationRepository.save(notification);
             return Optional.of(savedNotification);
         } catch (Exception e) {

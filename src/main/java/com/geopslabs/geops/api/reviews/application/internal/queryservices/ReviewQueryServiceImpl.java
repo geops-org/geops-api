@@ -72,7 +72,7 @@ public class ReviewQueryServiceImpl implements ReviewQueryService {
     @Override
     public List<Review> handle(GetReviewsByOfferIdQuery query) {
         try {
-            return reviewRepository.findByOffer_IdOrderByCreatedAtDesc(query.offerId());
+            return reviewRepository.findByOfferIdOrderByCreatedAtDesc(query.offerId());
         } catch (Exception e) {
             // Log the error
             System.err.println("Error retrieving reviews by offer ID: " + e.getMessage());

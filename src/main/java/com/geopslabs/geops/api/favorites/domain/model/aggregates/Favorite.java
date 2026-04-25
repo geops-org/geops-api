@@ -1,10 +1,12 @@
 package com.geopslabs.geops.api.favorites.domain.model.aggregates;
 
 import com.geopslabs.geops.api.favorites.domain.model.commands.CreateFavoriteCommand;
-import com.geopslabs.geops.api.identity.domain.model.aggregates.User;
-import com.geopslabs.geops.api.offers.domain.model.aggregates.Offer;
 import com.geopslabs.geops.api.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 
 /**
@@ -32,72 +34,27 @@ import lombok.Getter;
 @Getter
 public class Favorite extends AuditableAbstractAggregateRoot<Favorite> {
 
-    /**
-     * Reference to the user who favorites the offer
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    /**
-     * Reference to the offer that was favorited
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "offer_id", nullable = false)
-    private Offer offer;
+    @Column(name = "offer_id", nullable = false)
+    private Long offerId;
 
     /**
      * Default constructor for JPA
      */
     protected Favorite() {}
 
-    /**
-     * Creates a new Favorite from a CreateFavoriteCommand
-     *
-     * @param command The command containing favorite creation data
-     * @param user The user entity reference
-     * @param offer The offer entity reference
-     */
-    public Favorite(CreateFavoriteCommand command, User user, Offer offer) {
-        this.user = user;
-        this.offer = offer;
+    public Favorite(CreateFavoriteCommand command) {
+        this.userId = command.userId();
+        this.offerId = command.offerId();
     }
 
-    /**
-     * Gets the user ID for this favorite
-     *
-     * @return The user ID
-     */
-    public Long getUserId() {
-        return this.user != null ? this.user.getId() : null;
-    }
-
-    /**
-     * Gets the offer ID for this favorite
-     *
-     * @return The offer ID
-     */
-    public Long getOfferId() {
-        return this.offer != null ? this.offer.getId() : null;
-    }
-
-    /**
-     * Checks if this favorite belongs to a specific user
-     *
-     * @param userId The user ID to check.
-     * @return true if the favorite belongs to the user, false otherwise
-     */
     public boolean belongsToUser(Long userId) {
-        return this.user != null && this.user.getId().equals(userId);
+        return this.userId != null && this.userId.equals(userId);
     }
 
-    /**
-     * Checks if this favorite is for a specific offer
-     *
-     * @param offerId The offer ID to check
-     * @return true if the favorite is for the offer, false otherwise
-     */
     public boolean isForOffer(Long offerId) {
-        return this.offer != null && this.offer.getId().equals(offerId);
+        return this.offerId != null && this.offerId.equals(offerId);
     }
 }

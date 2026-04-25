@@ -27,33 +27,13 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
      * @param userId User ID
      * @return List of notifications
      */
-    List<Notification> findByUser_IdOrderByCreatedAtDesc(Long userId);
+    List<Notification> findByUserIdOrderByCreatedAtDesc(Long userId);
 
-    /**
-     * Count unread notifications for a user
-     *
-     * @param userId User ID
-     * @param isRead Read status (false for unread)
-     * @return Count of unread notifications
-     */
-    Long countByUser_IdAndIsRead(Long userId, Boolean isRead);
+    Long countByUserIdAndIsRead(Long userId, Boolean isRead);
 
-    /**
-     * Find all unread notifications for a user
-     *
-     * @param userId User ID
-     * @param isRead Read status
-     * @return List of notifications
-     */
-    List<Notification> findByUser_IdAndIsReadOrderByCreatedAtDesc(Long userId, Boolean isRead);
+    List<Notification> findByUserIdAndIsReadOrderByCreatedAtDesc(Long userId, Boolean isRead);
 
-    /**
-     * Mark all notifications as read for a user
-     *
-     * @param userId User ID
-     * @return Number of updated notifications
-     */
     @Modifying
-    @Query("UPDATE Notification n SET n.isRead = true WHERE n.user.id = :userId AND n.isRead = false")
+    @Query("UPDATE Notification n SET n.isRead = true WHERE n.userId = :userId AND n.isRead = false")
     int markAllAsReadByUserId(@Param("userId") Long userId);
 }

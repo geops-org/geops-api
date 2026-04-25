@@ -33,7 +33,7 @@ public class NotificationQueryServiceImpl implements NotificationQueryService {
 
     @Override
     public List<Notification> handle(GetNotificationsByUserIdQuery query) {
-        return notificationRepository.findByUser_IdOrderByCreatedAtDesc(query.userId());
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(query.userId());
     }
 
     @Override
@@ -43,6 +43,6 @@ public class NotificationQueryServiceImpl implements NotificationQueryService {
 
     @Override
     public Long handle(GetUnreadCountByUserIdQuery query) {
-        return notificationRepository.countByUser_IdAndIsRead(query.userId(), false);
+        return notificationRepository.countByUserIdAndIsRead(query.userId(), false);
     }
 }

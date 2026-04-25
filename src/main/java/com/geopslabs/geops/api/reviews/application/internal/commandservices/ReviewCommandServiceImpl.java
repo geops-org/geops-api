@@ -1,12 +1,12 @@
 package com.geopslabs.geops.api.reviews.application.internal.commandservices;
-import com.geopslabs.geops.api.identity.infrastructure.persistence.jpa.UserRepository;
-import com.geopslabs.geops.api.offers.infrastructure.persistence.jpa.OfferRepository;
+import com.geopslabs.geops.api.notifications.application.internal.outboundservices.NotificationFactoryService;
 import com.geopslabs.geops.api.reviews.domain.model.aggregates.Review;
 import com.geopslabs.geops.api.reviews.domain.model.commands.CreateReviewCommand;
 import com.geopslabs.geops.api.reviews.domain.model.commands.UpdateReviewCommand;
+import com.geopslabs.geops.api.reviews.domain.services.OfferQueryPort;
 import com.geopslabs.geops.api.reviews.domain.services.ReviewCommandService;
+import com.geopslabs.geops.api.reviews.domain.services.UserValidationPort;
 import com.geopslabs.geops.api.reviews.infrastructure.persistence.jpa.ReviewRepository;
-import com.geopslabs.geops.api.notifications.application.internal.outboundservices.NotificationFactoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,27 +28,19 @@ import java.util.Optional;
 public class ReviewCommandServiceImpl implements ReviewCommandService {
 
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
-    private final OfferRepository offerRepository;
+    private final UserValidationPort userValidationPort;
+    private final OfferQueryPort offerQueryPort;
     private final NotificationFactoryService notificationFactory;
 
-    /**
-     * Constructor for dependency injection
-     *
-     * @param reviewRepository The repository for review data access
-     * @param userRepository The repository for user data access
-     * @param offerRepository The repository for offer data access
-     * @param notificationFactory Service to create notifications
-     */
     public ReviewCommandServiceImpl(
         ReviewRepository reviewRepository,
-        UserRepository userRepository,
-        OfferRepository offerRepository,
+        UserValidationPort userValidationPort,
+        OfferQueryPort offerQueryPort,
         NotificationFactoryService notificationFactory
     ) {
         this.reviewRepository = reviewRepository;
-        this.userRepository = userRepository;
-        this.offerRepository = offerRepository;
+        this.userValidationPort = userValidationPort;
+        this.offerQueryPort = offerQueryPort;
         this.notificationFactory = notificationFactory;
     }
 
@@ -58,25 +50,20 @@ public class ReviewCommandServiceImpl implements ReviewCommandService {
     @Override
     public Optional<Review> handle(CreateReviewCommand command) {
         try {
-            // Load User and Offer entities
-            var user = userRepository.findById(command.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + command.userId()));
-            
-            var offer = offerRepository.findById(command.offerId())
-                .orElseThrow(() -> new IllegalArgumentException("Offer not found with id: " + command.offerId()));
+            if (!userValidationPort.existsById(command.userId()))
+                throw new IllegalArgumentException("User not found with id: " + command.userId());
 
-            // Create review with entities
-            var review = new Review(command, user, offer);
+            if (!offerQueryPort.existsById(command.offerId()))
+                throw new IllegalArgumentException("Offer not found with id: " + command.offerId());
 
-            // Save the review to the repository
+            var review = new Review(command);
             var savedReview = reviewRepository.save(review);
 
-            // Create notification for review comment
-            // For now, notify the user who created the review as confirmation
+            var offerTitle = offerQueryPort.getTitleById(command.offerId()).orElse("Oferta");
             notificationFactory.createReviewCommentNotification(
                 command.userId(),
                 command.offerId(),
-                offer.getTitle(),
+                offerTitle,
                 "Tú"
             );
 

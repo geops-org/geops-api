@@ -1,11 +1,12 @@
 package com.geopslabs.geops.api.reviews.domain.model.aggregates;
 
-import com.geopslabs.geops.api.identity.domain.model.aggregates.User;
-import com.geopslabs.geops.api.offers.domain.model.aggregates.Offer;
 import com.geopslabs.geops.api.reviews.domain.model.commands.CreateReviewCommand;
 import com.geopslabs.geops.api.reviews.domain.model.commands.UpdateReviewCommand;
 import com.geopslabs.geops.api.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 /**
@@ -27,19 +28,11 @@ import lombok.Getter;
 @Getter
 public class Review extends AuditableAbstractAggregateRoot<Review> {
 
-    /**
-     * Reference to the offer that this review belongs to
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "offer_id", nullable = false)
-    private Offer offer;
+    @Column(name = "offer_id", nullable = false)
+    private Long offerId;
 
-    /**
-     * Reference to the user who created the review
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     /**
      * Name of the user who created the review
@@ -70,38 +63,13 @@ public class Review extends AuditableAbstractAggregateRoot<Review> {
      */
     protected Review() {}
 
-    /**
-     * Creates a new Review from a CreateReviewCommand
-     *
-     * @param command The command containing review creation data
-     * @param user The user entity reference
-     * @param offer The offer entity reference
-     */
-    public Review(CreateReviewCommand command, User user, Offer offer) {
-        this.offer = offer;
-        this.user = user;
+    public Review(CreateReviewCommand command) {
+        this.offerId = command.offerId();
+        this.userId = command.userId();
         this.userName = command.userName();
         this.rating = command.rating();
         this.text = command.text();
         this.likes = 0; // Always starts with 0 likes
-    }
-
-    /**
-     * Gets the offer ID for this review
-     *
-     * @return The offer ID
-     */
-    public Long getOfferId() {
-        return this.offer != null ? this.offer.getId() : null;
-    }
-
-    /**
-     * Gets the user ID for this review
-     *
-     * @return The user ID
-     */
-    public Long getUserId() {
-        return this.user != null ? this.user.getId() : null;
     }
 
     /**
