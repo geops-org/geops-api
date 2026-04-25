@@ -5,6 +5,7 @@ import com.geopslabs.geops.api.identity.infrastructure.authorization.sfs.pipelin
 import com.geopslabs.geops.api.identity.infrastructure.hashing.bcrypt.BCryptHashingService;
 import com.geopslabs.geops.api.identity.infrastructure.tokens.jwt.BearerTokenService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -30,6 +33,7 @@ public class WebSecurityConfiguration {
     private final BearerTokenService tokenService;
     private final BCryptHashingService hashingService;
     private final AuthenticationEntryPoint unauthorizedRequestHandler;
+    private final List<String> allowedOrigins;
 
     @Bean
     public BearerAuthorizationRequestFilter authorizationRequestFilter() {
@@ -58,8 +62,8 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(configurer -> configurer.configurationSource(request -> {
             var cors = new CorsConfiguration();
-            cors.setAllowedOrigins(List.of("*"));
-            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedOrigins(allowedOrigins);
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
         }));
@@ -80,10 +84,22 @@ public class WebSecurityConfiguration {
         return http.build();
     }
 
-    public WebSecurityConfiguration(@Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService, BearerTokenService tokenService, BCryptHashingService hashingService, UnauthorizedRequestHandlerEntryPoint authenticationEntryPoint) {
+    public WebSecurityConfiguration(
+            @Qualifier("defaultUserDetailsService") UserDetailsService userDetailsService,
+            BearerTokenService tokenService,
+            BCryptHashingService hashingService,
+            UnauthorizedRequestHandlerEntryPoint authenticationEntryPoint,
+            @Value("${frontend.url:http://localhost:4200}") String frontendUrl,
+            @Value("${prod.frontend.url:}") String prodFrontendUrl
+    ) {
         this.userDetailsService = userDetailsService;
         this.tokenService = tokenService;
         this.hashingService = hashingService;
         this.unauthorizedRequestHandler = authenticationEntryPoint;
+
+        List<String> origins = new ArrayList<>();
+        if (frontendUrl != null && !frontendUrl.isBlank()) origins.add(frontendUrl);
+        if (prodFrontendUrl != null && !prodFrontendUrl.isBlank()) origins.add(prodFrontendUrl);
+        this.allowedOrigins = Collections.unmodifiableList(origins);
     }
 }
