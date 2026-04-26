@@ -80,14 +80,8 @@ public class OfferQueryServiceImpl implements OfferQueryService {
      */
     @Override
     public List<Offer> handle(GetAllOffersByCampaignIdQuery query) {
-        try{
-            if (!campaignValidationPort.existsById(query.campaignId()))
-                throw new IllegalArgumentException("Campaign with id " + query.campaignId() + " does not exist");
-            return offerRepository.findByCampaignId(query.campaignId());
-        }
-        catch (Exception e){
-            System.err.println("Error retrieving all offers by campaign id: " + e.getMessage());
-            return List.of();
-        }
+        if (!campaignValidationPort.existsById(query.campaignId()))
+            throw new IllegalArgumentException("Campaign with id " + query.campaignId() + " does not exist");
+        return offerRepository.findByCampaignId(query.campaignId());
     }
 }
