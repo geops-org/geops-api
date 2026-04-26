@@ -61,6 +61,16 @@ public class ConsumptionController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ConsumptionResource>> getByUser(
             @Parameter(description = "User unique identifier") @PathVariable Long userId) {
+        return getByUserParam(userId);
+    }
+
+    @Operation(summary = "Get visits by user ID (query param)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Visits retrieved successfully")
+    })
+    @GetMapping
+    public ResponseEntity<List<ConsumptionResource>> getByUserParam(
+            @Parameter(description = "User unique identifier") @RequestParam Long userId) {
 
         var query = new GetConsumptionsByUserQuery(userId);
         var consumptions = consumptionQueryService.handle(query);

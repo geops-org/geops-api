@@ -220,10 +220,8 @@ public class OfferController {
     @GetMapping("/campaign/{id}")
     public ResponseEntity<List<OfferResource>> getByCampaignId(@PathVariable Long id){
         var query = new GetAllOffersByCampaignIdQuery(id);
-
         var offers = offerQueryService.handle(query);
-        if(offers.isEmpty()) return ResponseEntity.notFound().build();
-        var offersResource =  offers.stream()
+        var offersResource = offers.stream()
                 .map(OfferResourceFromEntityAssembler::toResourceFromEntity)
                 .toList();
         return ResponseEntity.ok(offersResource);

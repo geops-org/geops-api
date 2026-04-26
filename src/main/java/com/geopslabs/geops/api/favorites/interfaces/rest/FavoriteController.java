@@ -106,8 +106,7 @@ public class FavoriteController {
                     .toResourceFromEntity(favorite.get());
                 return ResponseEntity.ok(favoriteResource);
             } else {
-                // Return 200 with empty body to indicate "not favorited"
-                return ResponseEntity.ok().build();
+                return ResponseEntity.notFound().build();
             }
         } else {
             // GET /favorites?userId=1
