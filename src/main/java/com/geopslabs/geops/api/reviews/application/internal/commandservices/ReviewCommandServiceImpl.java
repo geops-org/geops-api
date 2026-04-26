@@ -3,6 +3,7 @@ import com.geopslabs.geops.api.notifications.application.internal.outboundservic
 import com.geopslabs.geops.api.reviews.domain.model.aggregates.Review;
 import com.geopslabs.geops.api.reviews.domain.model.commands.CreateReviewCommand;
 import com.geopslabs.geops.api.reviews.domain.model.commands.UpdateReviewCommand;
+import com.geopslabs.geops.api.reviews.domain.model.exceptions.ReviewAlreadyExistsException;
 import com.geopslabs.geops.api.reviews.domain.model.exceptions.ReviewNotAllowedException;
 import com.geopslabs.geops.api.reviews.domain.services.ConsumptionValidationPort;
 import com.geopslabs.geops.api.reviews.domain.services.OfferQueryPort;
@@ -56,6 +57,9 @@ public class ReviewCommandServiceImpl implements ReviewCommandService {
     public Optional<Review> handle(CreateReviewCommand command) {
         if (!consumptionValidationPort.existsByUserAndOffer(command.userId(), command.offerId()))
             throw new ReviewNotAllowedException("Debes visitar primero");
+
+        if (reviewRepository.findByUserIdAndOfferId(command.userId(), command.offerId()).isPresent())
+            throw new ReviewAlreadyExistsException(command.userId(), command.offerId());
 
         try {
             if (!userValidationPort.existsById(command.userId()))
