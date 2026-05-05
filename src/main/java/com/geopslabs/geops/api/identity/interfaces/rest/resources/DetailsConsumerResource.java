@@ -10,7 +10,6 @@ package com.geopslabs.geops.api.identity.interfaces.rest.resources;
  * @param id The unique identifier (same as user ID)
  * @param userId The user ID associated with these consumer details
  * @param categoriasFavoritas List of favorite categories
- * @param recibirNotificaciones Configuration to receive notifications
  * @param permisoUbicacion Permission to access location
  * @param direccionCasa Saved home address
  * @param direccionTrabajo Saved work address
@@ -25,7 +24,6 @@ public record DetailsConsumerResource(
     Long id,
     Long userId,
     String categoriasFavoritas,
-    Boolean recibirNotificaciones,
     Boolean permisoUbicacion,
     String direccionCasa,
     String direccionTrabajo,
@@ -34,4 +32,3 @@ public record DetailsConsumerResource(
     java.util.Date updatedAt
 ) {
 }
-
