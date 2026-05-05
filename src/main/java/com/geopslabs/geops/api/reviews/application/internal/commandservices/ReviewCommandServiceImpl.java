@@ -1,5 +1,4 @@
 package com.geopslabs.geops.api.reviews.application.internal.commandservices;
-import com.geopslabs.geops.api.notifications.application.internal.outboundservices.NotificationFactoryService;
 import com.geopslabs.geops.api.reviews.domain.model.aggregates.Review;
 import com.geopslabs.geops.api.reviews.domain.model.commands.CreateReviewCommand;
 import com.geopslabs.geops.api.reviews.domain.model.commands.UpdateReviewCommand;
@@ -34,20 +33,17 @@ public class ReviewCommandServiceImpl implements ReviewCommandService {
     private final UserValidationPort userValidationPort;
     private final OfferQueryPort offerQueryPort;
     private final ConsumptionValidationPort consumptionValidationPort;
-    private final NotificationFactoryService notificationFactory;
 
     public ReviewCommandServiceImpl(
         ReviewRepository reviewRepository,
         UserValidationPort userValidationPort,
         OfferQueryPort offerQueryPort,
-        ConsumptionValidationPort consumptionValidationPort,
-        NotificationFactoryService notificationFactory
+        ConsumptionValidationPort consumptionValidationPort
     ) {
         this.reviewRepository = reviewRepository;
         this.userValidationPort = userValidationPort;
         this.offerQueryPort = offerQueryPort;
         this.consumptionValidationPort = consumptionValidationPort;
-        this.notificationFactory = notificationFactory;
     }
 
     /**
@@ -70,14 +66,6 @@ public class ReviewCommandServiceImpl implements ReviewCommandService {
 
             var review = new Review(command);
             var savedReview = reviewRepository.save(review);
-
-            var offerTitle = offerQueryPort.getTitleById(command.offerId()).orElse("Oferta");
-            notificationFactory.createReviewCommentNotification(
-                command.userId(),
-                command.offerId(),
-                offerTitle,
-                "Tú"
-            );
 
             return Optional.of(savedReview);
 

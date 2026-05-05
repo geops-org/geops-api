@@ -99,7 +99,6 @@ public class DetailsConsumerController {
         var command = new CreateDetailsConsumerCommand(
             userId,
             resource.categoriasFavoritas(),
-            resource.recibirNotificaciones(),
             resource.permisoUbicacion(),
             resource.direccionCasa(),
             resource.direccionTrabajo(),
@@ -140,7 +139,6 @@ public class DetailsConsumerController {
         var command = new UpdateDetailsConsumerCommand(
             userId,
             resource.categoriasFavoritas(),
-            resource.recibirNotificaciones(),
             resource.permisoUbicacion(),
             resource.direccionCasa(),
             resource.direccionTrabajo(),

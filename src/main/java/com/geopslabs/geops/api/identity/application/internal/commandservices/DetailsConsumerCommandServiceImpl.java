@@ -66,7 +66,6 @@ public class DetailsConsumerCommandServiceImpl implements DetailsConsumerCommand
             var detailsConsumer = new DetailsConsumer(
                 user,
                 command.categoriasFavoritas(),
-                command.recibirNotificaciones(),
                 command.permisoUbicacion(),
                 command.direccionCasa(),
                 command.direccionTrabajo(),
@@ -101,7 +100,6 @@ public class DetailsConsumerCommandServiceImpl implements DetailsConsumerCommand
             // Update consumer details
             detailsConsumer.updateConsumerDetails(
                 command.categoriasFavoritas(),
-                command.recibirNotificaciones(),
                 command.permisoUbicacion(),
                 command.direccionCasa(),
                 command.direccionTrabajo(),

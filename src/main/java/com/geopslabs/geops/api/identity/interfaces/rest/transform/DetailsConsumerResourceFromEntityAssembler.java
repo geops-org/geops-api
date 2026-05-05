@@ -26,7 +26,6 @@ public class DetailsConsumerResourceFromEntityAssembler {
             entity.getId(),
             entity.getUser().getId(),
             entity.getCategoriasFavoritas(),
-            entity.getRecibirNotificaciones(),
             entity.getPermisoUbicacion(),
             entity.getDireccionCasa(),
             entity.getDireccionTrabajo(),
@@ -36,4 +35,3 @@ public class DetailsConsumerResourceFromEntityAssembler {
         );
     }
 }
-

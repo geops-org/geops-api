@@ -7,7 +7,6 @@ import com.geopslabs.geops.api.favorites.domain.services.FavoriteCommandService;
 import com.geopslabs.geops.api.favorites.domain.services.OfferExistencePort;
 import com.geopslabs.geops.api.favorites.domain.services.UserValidationPort;
 import com.geopslabs.geops.api.favorites.infrastructure.persistence.jpa.FavoriteRepository;
-import com.geopslabs.geops.api.notifications.application.internal.outboundservices.NotificationFactoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,18 +30,15 @@ public class FavoriteCommandServiceImpl implements FavoriteCommandService {
     private final FavoriteRepository favoriteRepository;
     private final UserValidationPort userValidationPort;
     private final OfferExistencePort offerExistencePort;
-    private final NotificationFactoryService notificationFactory;
 
     public FavoriteCommandServiceImpl(
         FavoriteRepository favoriteRepository,
         UserValidationPort userValidationPort,
-        OfferExistencePort offerExistencePort,
-        NotificationFactoryService notificationFactory
+        OfferExistencePort offerExistencePort
     ) {
         this.favoriteRepository = favoriteRepository;
         this.userValidationPort = userValidationPort;
         this.offerExistencePort = offerExistencePort;
-        this.notificationFactory = notificationFactory;
     }
 
     /**
@@ -77,13 +73,6 @@ public class FavoriteCommandServiceImpl implements FavoriteCommandService {
 
             // Save the favorite to the repository
             var savedFavorite = favoriteRepository.save(favorite);
-
-            // Create notification for favorite added
-            notificationFactory.createFavoriteAddedNotification(
-                command.userId(),
-                command.offerId().toString(),
-                "Oferta"
-            );
 
             return Optional.of(savedFavorite);
 
