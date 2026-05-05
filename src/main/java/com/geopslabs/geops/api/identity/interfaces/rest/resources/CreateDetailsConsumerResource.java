@@ -8,7 +8,6 @@ package com.geopslabs.geops.api.identity.interfaces.rest.resources;
  *
  * @summary Request resource for creating consumer details
  * @param categoriasFavoritas List of favorite categories
- * @param recibirNotificaciones Configuration to receive notifications
  * @param permisoUbicacion Permission to access location
  * @param direccionCasa Saved home address
  * @param direccionTrabajo Saved work address
@@ -19,11 +18,9 @@ package com.geopslabs.geops.api.identity.interfaces.rest.resources;
  */
 public record CreateDetailsConsumerResource(
     String categoriasFavoritas,
-    Boolean recibirNotificaciones,
     Boolean permisoUbicacion,
     String direccionCasa,
     String direccionTrabajo,
     String direccionUniversidad
 ) {
 }
-

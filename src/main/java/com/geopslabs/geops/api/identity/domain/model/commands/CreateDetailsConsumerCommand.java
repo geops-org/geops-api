@@ -8,7 +8,6 @@ package com.geopslabs.geops.api.identity.domain.model.commands;
  * @summary Command to create consumer details
  * @param userId The unique identifier of the user
  * @param categoriasFavoritas List of favorite categories
- * @param recibirNotificaciones Configuration for notifications
  * @param permisoUbicacion Permission to access location
  * @param direccionCasa Home address
  * @param direccionTrabajo Work address
@@ -20,7 +19,6 @@ package com.geopslabs.geops.api.identity.domain.model.commands;
 public record CreateDetailsConsumerCommand(
     Long userId,
     String categoriasFavoritas,
-    Boolean recibirNotificaciones,
     Boolean permisoUbicacion,
     String direccionCasa,
     String direccionTrabajo,
@@ -37,4 +35,3 @@ public record CreateDetailsConsumerCommand(
         }
     }
 }
-

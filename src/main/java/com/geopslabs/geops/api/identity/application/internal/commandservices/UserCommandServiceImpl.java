@@ -7,7 +7,6 @@ import com.geopslabs.geops.api.identity.domain.model.commands.DeleteUserCommand;
 import com.geopslabs.geops.api.identity.domain.model.commands.UpdateUserCommand;
 import com.geopslabs.geops.api.identity.domain.services.UserCommandService;
 import com.geopslabs.geops.api.identity.infrastructure.persistence.jpa.UserRepository;
-import com.geopslabs.geops.api.notifications.application.internal.outboundservices.NotificationFactoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,23 +28,19 @@ import java.util.Optional;
 public class UserCommandServiceImpl implements UserCommandService {
 
     private final UserRepository userRepository;
-    private final NotificationFactoryService notificationFactory;
     private final HashingService hashingService;
 
     /**
      * Constructor for dependency injection
      *
      * @param userRepository The repository for user data access
-     * @param notificationFactory Service to create notifications
      * @param hashingService Service to hash passwords
      */
     public UserCommandServiceImpl(
         UserRepository userRepository,
-        NotificationFactoryService notificationFactory,
         HashingService hashingService
     ) {
         this.userRepository = userRepository;
-        this.notificationFactory = notificationFactory;
         this.hashingService = hashingService;
     }
 
@@ -79,11 +74,6 @@ public class UserCommandServiceImpl implements UserCommandService {
 
             // Save and return the user
             var savedUser = userRepository.save(user);
-            
-            // Create notification if user is PREMIUM
-            if ("PREMIUM".equals(command.plan())) {
-                notificationFactory.createPremiumUpgradeNotification(savedUser.getId());
-            }
             
             return Optional.of(savedUser);
         } catch (Exception e) {
@@ -136,14 +126,6 @@ public class UserCommandServiceImpl implements UserCommandService {
             // Save and return the updated user
             var updatedUser = userRepository.save(user);
             
-            // Create notification for profile update
-            notificationFactory.createProfileUpdateNotification(updatedUser.getId());
-            
-            // Create notification if user upgraded to PREMIUM
-            if ("PREMIUM".equals(command.plan()) && !"PREMIUM".equals(user.getPlan())) {
-                notificationFactory.createPremiumUpgradeNotification(updatedUser.getId());
-            }
-            
             return Optional.of(updatedUser);
         } catch (Exception e) {
             System.err.println("Error updating user: " + e.getMessage());
@@ -173,4 +155,3 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
 }
-
