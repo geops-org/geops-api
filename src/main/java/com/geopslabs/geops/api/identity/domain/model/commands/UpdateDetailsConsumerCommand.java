@@ -9,7 +9,6 @@ package com.geopslabs.geops.api.identity.domain.model.commands;
  * @summary Command to update consumer details
  * @param userId The unique identifier of the user
  * @param categoriasFavoritas Updated favorite categories (optional)
- * @param recibirNotificaciones Updated notification setting (optional)
  * @param permisoUbicacion Updated location permission (optional)
  * @param direccionCasa Updated home address (optional)
  * @param direccionTrabajo Updated work address (optional)
@@ -21,7 +20,6 @@ package com.geopslabs.geops.api.identity.domain.model.commands;
 public record UpdateDetailsConsumerCommand(
     Long userId,
     String categoriasFavoritas,
-    Boolean recibirNotificaciones,
     Boolean permisoUbicacion,
     String direccionCasa,
     String direccionTrabajo,
@@ -38,4 +36,3 @@ public record UpdateDetailsConsumerCommand(
         }
     }
 }
-
