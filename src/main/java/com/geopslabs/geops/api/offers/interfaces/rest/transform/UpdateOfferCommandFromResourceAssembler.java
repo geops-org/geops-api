@@ -33,7 +33,6 @@ public class UpdateOfferCommandFromResourceAssembler {
             resource.title(),
             resource.partner(),
             resource.price(),
-            resource.codePrefix(),
             resource.validTo(),
             resource.rating(),
             resource.location(),
@@ -42,4 +41,3 @@ public class UpdateOfferCommandFromResourceAssembler {
         );
     }
 }
-

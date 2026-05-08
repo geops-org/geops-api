@@ -31,7 +31,6 @@ public class CreateOfferCommandFromResourceAssembler {
             resource.title(),
             resource.partner(),
             resource.price(),
-            resource.codePrefix(),
             resource.validTo(),
             resource.rating(),
             resource.location(),

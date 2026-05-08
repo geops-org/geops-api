@@ -13,7 +13,6 @@ import java.math.BigDecimal;
  * @param title The title of the offer
  * @param partner The partner company providing the offer
  * @param price The price of the offer
- * @param codePrefix The code prefix for promotional codes
  * @param validTo The expiration date of the offer
  * @param rating The rating of the offer (0-5 scale)
  * @param location The location where the offer is valid
@@ -28,7 +27,6 @@ public record CreateOfferCommand (
         String title,
         String partner,
         java.math.BigDecimal price,
-        String codePrefix,
         java.time.LocalDate validTo,
         Integer rating,
         String location,
@@ -56,10 +54,6 @@ public record CreateOfferCommand (
 
         if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("price must be positive");
-        }
-
-        if (codePrefix == null || codePrefix.isBlank()) {
-            throw new IllegalArgumentException("codePrefix cannot be null or empty");
         }
 
         if (validTo == null) {

@@ -48,12 +48,6 @@ public class Offer extends AuditableAbstractAggregateRoot<Offer> {
     private BigDecimal price;
 
     /**
-     * Code prefix used for generating promotional codes
-     */
-    @Column(name = "code_prefix", nullable = false, length = 10)
-    private String codePrefix;
-
-    /**
      * Expiration date of the offer
      */
     @Column(name = "valid_to", nullable = false)
@@ -99,7 +93,6 @@ public class Offer extends AuditableAbstractAggregateRoot<Offer> {
         this.title = command.title();
         this.partner = command.partner();
         this.price = command.price();
-        this.codePrefix = command.codePrefix();
         this.validTo = command.validTo();
         this.rating = command.rating();
         this.location = command.location();
@@ -121,9 +114,6 @@ public class Offer extends AuditableAbstractAggregateRoot<Offer> {
         }
         if (command.price() != null) {
             this.price = command.price();
-        }
-        if (command.codePrefix() != null) {
-            this.codePrefix = command.codePrefix();
         }
         if (command.validTo() != null) {
             this.validTo = command.validTo();
