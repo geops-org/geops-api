@@ -14,7 +14,6 @@ import java.time.LocalDate;
  * @param title The title of the offer
  * @param partner The partner providing the offer
  * @param price The price of the offer
- * @param codePrefix The prefix code for the offer
  * @param validTo The expiration date of the offer
  * @param rating The rating of the offer (0-5)
  * @param location The location where the offer is valid
@@ -32,7 +31,6 @@ public record OfferResource(
     String title,
     String partner,
     BigDecimal price,
-    String codePrefix,
     LocalDate validTo,
     Integer rating,
     String location,
