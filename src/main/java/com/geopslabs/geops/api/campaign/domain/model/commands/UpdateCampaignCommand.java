@@ -1,6 +1,7 @@
 package com.geopslabs.geops.api.campaign.domain.model.commands;
 
 import com.geopslabs.geops.api.campaign.domain.model.valueobjects.ECampaignStatus;
+import com.geopslabs.geops.api.shared.infrastructure.sanitization.TextSanitizer;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -8,40 +9,45 @@ import java.util.Arrays;
 public record UpdateCampaignCommand(Long id, String name, String description, LocalDate startDate,
                                     LocalDate endDate, String status, Float estimatedBudget,
                                     Long totalImpressions, Long totalClicks) {
-    public UpdateCampaignCommand {
 
-        if(name == null || name.isBlank())
+    private static final float MAX_BUDGET = 1_000_000f;
+
+    public UpdateCampaignCommand {
+        if (name == null || name.isBlank())
             throw new IllegalArgumentException("Name cannot be null or blank");
 
-        if(description == null || description.isBlank())
+        if (description == null || description.isBlank())
             throw new IllegalArgumentException("Description cannot be null or blank");
 
-        if(startDate == null)
+        if (startDate == null)
             throw new IllegalArgumentException("Start date cannot be null");
 
-        if(endDate == null)
+        if (endDate == null)
             throw new IllegalArgumentException("End date cannot be null");
 
-        if(endDate.isBefore(startDate))
+        if (endDate.isBefore(startDate))
             throw new IllegalArgumentException("End date cannot be before start date");
 
-        if(status == null || status.isBlank())
+        if (status == null || status.isBlank())
             throw new IllegalArgumentException("Status cannot be null or blank");
 
         try {
             ECampaignStatus.valueOf(status);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                    "Invalid status, allowed values: " + Arrays.toString(ECampaignStatus.values())
-            );
+                    "Invalid status, allowed values: " + Arrays.toString(ECampaignStatus.values()));
         }
 
-        if (totalImpressions != null && totalImpressions < 0) {
+        if (totalImpressions != null && totalImpressions < 0)
             throw new IllegalArgumentException("Total impressions must be zero or greater");
-        }
 
-        if (totalClicks != null && totalClicks < 0) {
+        if (totalClicks != null && totalClicks < 0)
             throw new IllegalArgumentException("Total clicks must be zero or greater");
-        }
+
+        if (estimatedBudget != null && estimatedBudget > MAX_BUDGET)
+            throw new IllegalArgumentException("Estimated budget cannot exceed " + MAX_BUDGET);
+
+        name = TextSanitizer.sanitize(name);
+        description = TextSanitizer.sanitize(description);
     }
 }

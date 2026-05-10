@@ -1,41 +1,46 @@
 package com.geopslabs.geops.api.campaign.domain.model.commands;
 
-import com.geopslabs.geops.api.campaign.domain.model.aggregates.Campaign;
 import com.geopslabs.geops.api.shared.domain.model.valueobjects.ERole;
+import com.geopslabs.geops.api.shared.infrastructure.sanitization.TextSanitizer;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
-/**
- * Command to create a campaign
- * @param userId The user id
- * @param name The campaign name
- * @param description The campaign description
- * @param startDate The start date of the campaign
- * @param endDate The end date of the campaign
- * @param estimatedBudget The estimated budget for the campaign
- * @see Campaign
- */
-public record CreateCampaignCommand(Long userId, ERole requesterRole, String name, String description, LocalDate startDate, LocalDate endDate, Float estimatedBudget) {
+public record CreateCampaignCommand(Long userId, ERole requesterRole, String name, String description,
+                                    LocalDate startDate, LocalDate endDate, Float estimatedBudget) {
+
+    private static final float MAX_BUDGET = 1_000_000f;
+    private static final ZoneId LIMA_ZONE = ZoneId.of("America/Lima");
+
     public CreateCampaignCommand {
-        if(userId == null || userId < 0)
+        if (userId == null || userId < 0)
             throw new IllegalArgumentException("userId cannot be null");
 
         if (requesterRole == null)
             throw new IllegalArgumentException("requesterRole cannot be null");
 
-        if(name == null || name.isBlank())
+        if (name == null || name.isBlank())
             throw new IllegalArgumentException("Campaign name cannot be null or blank");
 
-        if(description == null || description.isBlank())
+        if (description == null || description.isBlank())
             throw new IllegalArgumentException("Campaign description cannot be null or blank");
 
-        if(startDate == null)
+        if (startDate == null)
             throw new IllegalArgumentException("Start date cannot be null");
 
-        if(endDate == null)
+        if (startDate.isBefore(LocalDate.now(LIMA_ZONE)))
+            throw new IllegalArgumentException("Start date must be today or in the future");
+
+        if (endDate == null)
             throw new IllegalArgumentException("End date cannot be null");
 
-        if(endDate.isBefore(startDate))
+        if (endDate.isBefore(startDate))
             throw new IllegalArgumentException("End date cannot be before start date");
+
+        if (estimatedBudget != null && estimatedBudget > MAX_BUDGET)
+            throw new IllegalArgumentException("Estimated budget cannot exceed " + MAX_BUDGET);
+
+        name = TextSanitizer.sanitize(name);
+        description = TextSanitizer.sanitize(description);
     }
 }

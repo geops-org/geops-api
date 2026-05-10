@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import com.geopslabs.geops.api.shared.domain.model.valueobjects.ERole;
 
@@ -49,7 +50,7 @@ public class CampaignController {
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     @PreAuthorize("hasAuthority('OWNER')")
-    public ResponseEntity<CampaignResource> create(@RequestBody CreateCampaignResource resource, Authentication authentication) {
+    public ResponseEntity<CampaignResource> create(@Valid @RequestBody CreateCampaignResource resource, Authentication authentication) {
         var command = CreateCampaignCommandFromResourceAssembler.toCommandFromResource(resource, extractRole(authentication));
         var createdCampaign = campaignCommandService.handle(command)
                 .orElseThrow(() -> new IllegalStateException("Campaign could not be created"));
@@ -107,7 +108,7 @@ public class CampaignController {
     })
     public ResponseEntity<CampaignResource> update(@Parameter(description = "Review unique identifier")
                                                    @PathVariable Long id,
-                                                   @RequestBody UpdateCampaignResource resource) {
+                                                   @Valid @RequestBody UpdateCampaignResource resource) {
         var existingCampaign = campaignQueryService.handle(new GetCampaignByIdQuery(id));
         if(existingCampaign.isEmpty()) return ResponseEntity.notFound().build();
 
