@@ -1,7 +1,6 @@
 package com.geopslabs.geops.api.campaign.domain.model.commands;
 
 import com.geopslabs.geops.api.shared.domain.model.valueobjects.ERole;
-import com.geopslabs.geops.api.shared.infrastructure.sanitization.TextSanitizer;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -40,7 +39,5 @@ public record CreateCampaignCommand(Long userId, ERole requesterRole, String nam
         if (estimatedBudget != null && estimatedBudget > MAX_BUDGET)
             throw new IllegalArgumentException("Estimated budget cannot exceed " + MAX_BUDGET);
 
-        name = TextSanitizer.sanitize(name);
-        description = TextSanitizer.sanitize(description);
     }
 }
