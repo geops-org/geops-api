@@ -12,7 +12,6 @@ import java.time.LocalDate;
  * @param title The title of the offer
  * @param partner The partner providing the offer
  * @param price The price of the offer
- * @param codePrefix The prefix code for the offer
  * @param validTo The expiration date of the offer
  * @param rating The rating of the offer (0-5)
  * @param location The location where the offer is valid
@@ -27,7 +26,6 @@ public record CreateOfferResource(
     String title,
     String partner,
     BigDecimal price,
-    String codePrefix,
     LocalDate validTo,
     Integer rating,
     String location,
@@ -53,10 +51,6 @@ public record CreateOfferResource(
 
         if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("price must be positive");
-        }
-
-        if (codePrefix == null || codePrefix.isBlank()) {
-            throw new IllegalArgumentException("codePrefix cannot be null or empty");
         }
 
         if (validTo == null) {

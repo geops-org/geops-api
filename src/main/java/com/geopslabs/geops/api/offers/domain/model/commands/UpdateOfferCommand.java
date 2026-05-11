@@ -11,7 +11,6 @@ package com.geopslabs.geops.api.offers.domain.model.commands;
  * @param title The updated title of the offer
  * @param partner The updated partner associated with the offer
  * @param price The updated price of the offer
- * @param codePrefix The updated code prefix for the offer
  * @param validTo The updated validity date of the offer
  * @param rating The updated rating of the offer
  * @param location The updated location of the offer
@@ -27,7 +26,6 @@ public record UpdateOfferCommand (
         String title,
         String partner,
         java.math.BigDecimal price,
-        String codePrefix,
         java.time.LocalDate validTo,
         Integer rating,
         String location,

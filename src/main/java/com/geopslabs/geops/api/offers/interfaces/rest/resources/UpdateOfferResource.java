@@ -14,7 +14,6 @@ import java.time.LocalDate;
  * @param title The title of the offer (optional)
  * @param partner The partner providing the offer (optional)
  * @param price The price of the offer (optional)
- * @param codePrefix The prefix code for the offer (optional)
  * @param validTo The expiration date of the offer (optional)
  * @param rating The rating of the offer (0-5) (optional)
  * @param location The location where the offer is valid (optional)
@@ -28,7 +27,6 @@ public record UpdateOfferResource(
     String title,
     String partner,
     BigDecimal price,
-    String codePrefix,
     LocalDate validTo,
     Integer rating,
     String location,
@@ -55,10 +53,6 @@ public record UpdateOfferResource(
 
         if (partner != null && partner.isBlank()) {
             throw new IllegalArgumentException("partner cannot be blank if provided");
-        }
-
-        if (codePrefix != null && codePrefix.isBlank()) {
-            throw new IllegalArgumentException("codePrefix cannot be blank if provided");
         }
 
         if (location != null && location.isBlank()) {
