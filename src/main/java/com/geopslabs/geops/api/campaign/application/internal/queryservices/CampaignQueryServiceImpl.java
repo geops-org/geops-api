@@ -28,17 +28,11 @@ public class CampaignQueryServiceImpl implements CampaignQueryService {
 
     @Override
     public Optional<Campaign> handle(GetCampaignByIdQuery query) {
-        try{
-            var campaign = campaignRepository.findCampaignById(query.id());
-            if(campaign.isEmpty())
-                throw new IllegalArgumentException("Campaign with id " + query.id() + " not found");
-            return campaign;
+        var campaign = campaignRepository.findCampaignById(query.id());
+        if (campaign.isEmpty()) {
+            throw new IllegalArgumentException("Campaign with id " + query.id() + " not found");
         }
-        catch (Exception e){
-            System.out.println("Error creating a campaign: " + e.getMessage());
-            e.printStackTrace();
-            return Optional.empty();
-        }
+        return campaign;
     }
 
     @Override

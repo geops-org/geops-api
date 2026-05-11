@@ -30,12 +30,12 @@ class CampaignQueryServiceImplTest {
     // ── GetCampaignById
 
     @Test
-    void handle_GetById_WhenCampaignNotFound_ReturnsEmpty() {
+    void handle_GetById_WhenCampaignNotFound_ThrowsException() {
         when(campaignRepository.findCampaignById(99L)).thenReturn(Optional.empty());
 
-        var result = service.handle(new GetCampaignByIdQuery(99L));
-
-        assertThat(result).isEmpty();
+        assertThatThrownBy(() -> service.handle(new GetCampaignByIdQuery(99L)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Campaign with id 99 not found");
     }
 
     @Test
