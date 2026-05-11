@@ -14,7 +14,6 @@ import com.geopslabs.geops.api.shared.domain.model.valueobjects.ERole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -45,35 +44,20 @@ public class CampaignCommandServiceImpl implements CampaignCommandService {
 
     @Override
     public Optional<Campaign> handle(UpdateCampaignCommand command) {
-        try{
-            var foundCampaign = campaignRepository.findCampaignById(command.id());
-            if(foundCampaign.isEmpty()) throw new NoSuchElementException("Campaign not found with id: " + command.id());
-                foundCampaign.get().edit(command.name(), command.description(), command.startDate(), command.endDate(),
-                    ECampaignStatus.valueOf(command.status()), command.estimatedBudget(), command.totalImpressions(),
-                    command.totalClicks());
-            var editedCampaign = campaignRepository.save(foundCampaign.get());
-            return Optional.of(editedCampaign);
-        }
-        catch(Exception e){
-            System.out.println("Error editing campaign: " + e.getMessage());
-            e.printStackTrace();
-            return Optional.empty();
-        }
+        var foundCampaign = campaignRepository.findCampaignById(command.id());
+        if (foundCampaign.isEmpty()) return Optional.empty();
+        foundCampaign.get().edit(command.name(), command.description(), command.startDate(), command.endDate(),
+                ECampaignStatus.valueOf(command.status()), command.estimatedBudget(), command.totalImpressions(),
+                command.totalClicks());
+        return Optional.of(campaignRepository.save(foundCampaign.get()));
     }
 
     @Override
     public boolean handle(DeleteCampaignCommand command) {
-        try{
-            var foundCampaign = campaignRepository.findCampaignById(command.id());
-            if(foundCampaign.isEmpty()) throw new NoSuchElementException("Campaign not found with id: " + command.id());
-            campaignRepository.deleteCampaignById(command.id());
-            return true;
-        }
-        catch(Exception e){
-            System.out.println("Error deleting campaign: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        var foundCampaign = campaignRepository.findCampaignById(command.id());
+        if (foundCampaign.isEmpty()) return false;
+        campaignRepository.deleteCampaignById(command.id());
+        return true;
     }
 
 
