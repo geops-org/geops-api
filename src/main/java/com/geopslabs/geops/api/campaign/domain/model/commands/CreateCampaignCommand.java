@@ -1,6 +1,8 @@
 package com.geopslabs.geops.api.campaign.domain.model.commands;
 
 import com.geopslabs.geops.api.shared.domain.model.valueobjects.ERole;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -21,8 +23,12 @@ public record CreateCampaignCommand(Long userId, ERole requesterRole, String nam
         if (name == null || name.isBlank())
             throw new IllegalArgumentException("Campaign name cannot be null or blank");
 
+        name = Jsoup.clean(name, Safelist.none());
+
         if (description == null || description.isBlank())
             throw new IllegalArgumentException("Campaign description cannot be null or blank");
+
+        description = Jsoup.clean(description, Safelist.none());
 
         if (startDate == null)
             throw new IllegalArgumentException("Start date cannot be null");
